@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-}
+  env: {
+    SERVER: "https://test-build-service.onrender.com/",
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
