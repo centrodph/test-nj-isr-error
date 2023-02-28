@@ -4,6 +4,7 @@ const nextConfig = {
   swcMinify: true,
   env: {
     SERVER: "https://test-build-service.onrender.com/",
+    ARTICLE: 9900,
   },
 };
 

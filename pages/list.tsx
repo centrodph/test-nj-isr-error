@@ -22,11 +22,13 @@ export default function List({ data }: { data: number[] }) {
 
       <h1>Test NJ: 02282023</h1>
       <ul>
-        {data.map((id) => (
+        {data
+          .filter((id) => Number(id) !== Number(process.env.ARTICLE))
+          .map((id) => (
             <li key={id}>
-                <Link href={`/article/${id}`}>{id}</Link>
+              <Link href={`/article/${id}`}>{id}</Link>
             </li>
-        ))}
+          ))}
       </ul>
     </div>
   );
