@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { cleanPath, pathToUrl } from "../helpers/cleanUrl";
-import { CONTENT_TYPE } from "../helpers/constants";
+import { CONTENT_TYPE, REVALIDATE } from "../helpers/constants";
 import { getEntry } from "../helpers/getEntry";
 import { getUrls } from "../helpers/getUrls";
 
@@ -81,11 +81,12 @@ export const getStaticProps: GetStaticProps<{
   if (!data) {
     return {
       notFound: true,
+      revalidate: REVALIDATE,
     };
   }
   return {
     props: { data },
-    revalidate: 10, // In seconds
+    revalidate: REVALIDATE, // In seconds
   };
 };
 

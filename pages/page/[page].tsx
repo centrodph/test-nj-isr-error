@@ -2,7 +2,7 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { cleanUrl } from "../../helpers/cleanUrl";
-import { CONTENT_TYPE } from "../../helpers/constants";
+import { CONTENT_TYPE, REVALIDATE } from "../../helpers/constants";
 import { getUrls } from "../../helpers/getUrls";
 
 // This function gets called at build time on server-side.
@@ -20,7 +20,7 @@ export async function getStaticProps(context) {
     // Next.js will attempt to re-generate the page:
     // - When a request comes in
     // - At most once every 10 seconds
-    revalidate: 10, // In seconds
+    revalidate: REVALIDATE, // In seconds
   };
 }
 
