@@ -9,8 +9,10 @@ export default async function handler(
     // this should be the actual path not a rewritten path
     // e.g. for "/blog/[slug]" this should be "/blog/post-1"
     await res.revalidate("/index");
-    await res.revalidate("page/[page]");
-    await res.revalidate("[...url]");
+    await Promise.all(
+      new Array(10).fill(0).map((_, i) => res.revalidate(`/page/${i}`))
+    );
+    await res.revalidate(req.body.data.entry.url);
     return res.json({ revalidated: true });
   } catch (err) {
     // If there was an error, Next.js will continue
