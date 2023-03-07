@@ -19,3 +19,18 @@ export const getEntry = async (contentType: string, url: string) => {
   ).then((res) => res.json());
   return data.entries[0];
 };
+
+export const getEntryByUID = async (contentType: string, uid: string) => {
+  const params = new URLSearchParams({
+    environment: `${process.env.CONTENT_STACK_ENVIRONMENT}`,
+  }).toString();
+  const data: ArticleContentStack.Article[] = await fetch(
+    `${process.env.CONTENT_STACK_BASE_URL}v3/content_types/${contentType}/entries/${uid}?${params}`,
+    {
+      method: "GET",
+      headers: getHeaders(),
+      redirect: "follow",
+    }
+  ).then((res) => res.json());
+  return data.entries[0] as ArticleContentStack.Article;
+};
