@@ -77,6 +77,12 @@ export const getStaticProps: GetStaticProps<{
     CONTENT_TYPE,
     pathToUrl(params?.url as string[])
   );
+
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: { data },
     revalidate: 10, // In seconds
@@ -91,7 +97,6 @@ export default function ArticleId(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   const router = useRouter();
-
   return (
     <div>
       <Head>
