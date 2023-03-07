@@ -2,13 +2,14 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { cleanUrl } from "../helpers/cleanUrl";
+import { CONTENT_TYPE } from "../helpers/constants";
 import { getUrls } from "../helpers/getUrls";
 
 // This function gets called at build time on server-side.
 // It may be called again, on a serverless function, if
 // revalidation is enabled and a new request comes in
 export async function getStaticProps() {
-  const data = await getUrls("articles");
+  const data = await getUrls(CONTENT_TYPE);
   return {
     props: {
       data: data?.entries,
@@ -32,18 +33,22 @@ export default function List({
   return (
     <div>
       <Head>
-        <title>{process.env.EXAMPLE_TYPE}::Articles</title>
+        <title>{`${process.env.EXAMPLE_TYPE}::${CONTENT_TYPE}`}</title>
         <meta
           name="description"
-          content={`${process.env.EXAMPLE_TYPE}::Articles`}
+          content={`${process.env.EXAMPLE_TYPE}::${CONTENT_TYPE}`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>{process.env.EXAMPLE_TYPE}::Articles</h1>
-      <Link href={`/page/1`}>
-        <a className="page-btn">Next page</a>
-      </Link>
+      <h1>
+        {process.env.EXAMPLE_TYPE}::{CONTENT_TYPE}
+      </h1>
+      {showMore ? (
+        <Link href={`/page/1`}>
+          <a className="page-btn">Next page</a>
+        </Link>
+      ) : null}
       <ul
         style={{
           display: "grid",
@@ -52,7 +57,7 @@ export default function List({
         }}
       >
         {data.map((item) => {
-          const url = cleanUrl(item?.url?.url);
+          const url = cleanUrl(item?.url);
           return (
             <li
               key={item.uid}
@@ -62,7 +67,7 @@ export default function List({
               }}
             >
               <Link href={`/${url}`}>
-                <a className="article-btn"> {item?.url?.url}</a>
+                <a className="article-btn"> {item?.url}</a>
               </Link>
             </li>
           );

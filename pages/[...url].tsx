@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { cleanPath, pathToUrl } from "../helpers/cleanUrl";
+import { CONTENT_TYPE } from "../helpers/constants";
 import { getEntry } from "../helpers/getEntry";
 import { getUrls } from "../helpers/getUrls";
 
@@ -58,9 +59,9 @@ To update generated pages, use Incremental Static Regeneration in conjunction wi
  */
 
 export async function getStaticPaths() {
-  const data = await getUrls("articles");
+  const data = await getUrls(CONTENT_TYPE);
   const paths = data.entries.map((item) => ({
-    params: { url: cleanPath(item.url.url) },
+    params: { url: cleanPath(item.url) },
   }));
   return {
     paths,
@@ -73,7 +74,7 @@ export const getStaticProps: GetStaticProps<{
 }> = async (context) => {
   const { params } = context;
   const data: ArticleContentStack.Article = await getEntry(
-    "articles",
+    CONTENT_TYPE,
     pathToUrl(params?.url as string[])
   );
   return {
@@ -100,31 +101,16 @@ export default function ArticleId(
       </Head>
 
       <h1>{props.data?.title}</h1>
-      <div
-        style={{
-          padding: "2rem",
-          border: "1px solid #ccc",
-        }}
-      >
-        {props.data?.description}
-      </div>
 
       <button className="back-btn" onClick={() => router.back()}>
         Back
       </button>
 
-      {props.data?.article_body?.map((item, i) => {
-        if (!item?.rich_text_editor?.rich_text_editor) return <hr />;
-        return (
-          <div key={i}>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: item?.rich_text_editor.rich_text_editor,
-              }}
-            />
-          </div>
-        );
-      })}
+      <div
+        dangerouslySetInnerHTML={{
+          __html: props.data?.content,
+        }}
+      />
     </div>
   );
 }

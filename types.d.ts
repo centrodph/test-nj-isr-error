@@ -1,12 +1,12 @@
 interface ArticleListItem {
   uid: string;
-  url: {
-    url: string;
-    overridden: false;
-    useLangSub: false;
-  };
+  url: string;
 }
 
+interface ArticleListResponse {
+  count: number;
+  entries: ArticleListItem[];
+}
 declare module ArticleContentStack {
   export interface ACL {}
 
@@ -111,33 +111,7 @@ declare module ArticleContentStack {
     uid: string;
     ACL: ACL;
     _in_progress: boolean;
-    article_body: ArticleBody[];
-    article_tags: string[];
-    article_type: string;
-    audience_targeting: any[];
-    audience_targeting_boost: any[];
-    author: string[];
-    banner: Banner;
-    banner_settings: BannerSettings;
-    category: string[];
-    channels_config: any[];
-    content_targeting_parameters: any[];
-    created_at: Date;
-    created_by: string;
-    date: Date;
-    description: string;
-    external_link: string;
-    hide_from_lol_com: boolean;
-    patch_notes_body: any[];
-    promo_card_size: string;
-    send_mobile_push_notification: boolean;
-    send_to_mobile: boolean;
-    tags: any[];
+    content: string;
     title: string;
-    updated_at: Date;
-    updated_by: string;
-    url: Url;
-    youtube_link: string;
-    publish_details: PublishDetails2;
   }
 }

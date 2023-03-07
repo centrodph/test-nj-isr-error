@@ -2,6 +2,7 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { cleanUrl } from "../../helpers/cleanUrl";
+import { CONTENT_TYPE } from "../../helpers/constants";
 import { getUrls } from "../../helpers/getUrls";
 
 // This function gets called at build time on server-side.
@@ -9,7 +10,7 @@ import { getUrls } from "../../helpers/getUrls";
 // revalidation is enabled and a new request comes in
 export async function getStaticProps(context) {
   const { params } = context;
-  const data = await getUrls("articles", Number(params.page) * 100);
+  const data = await getUrls(CONTENT_TYPE, Number(params.page) * 100);
   return {
     props: {
       data: data?.entries,
@@ -36,7 +37,6 @@ export default function List(props: {
   params: { page: string };
 }) {
   const { data, count } = props;
-  console.log(">>>>>>", props);
   const showMore = count > data?.length || false;
   const nextPage = `/page/${Number(props.params?.page) + 1}`;
   const prevPage =
@@ -46,15 +46,17 @@ export default function List(props: {
   return (
     <div>
       <Head>
-        <title>{process.env.EXAMPLE_TYPE}::Articles</title>
+        <title>{`${process.env.EXAMPLE_TYPE}::${CONTENT_TYPE}`}</title>
         <meta
           name="description"
-          content={`${process.env.EXAMPLE_TYPE}::Articles`}
+          content={`${process.env.EXAMPLE_TYPE}::${CONTENT_TYPE}`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>{process.env.EXAMPLE_TYPE}::Articles</h1>
+      <h1>
+        {process.env.EXAMPLE_TYPE}::{CONTENT_TYPE}
+      </h1>
       <Link href={prevPage}>
         <a className="page-btn">Prev page</a>
       </Link>
@@ -71,7 +73,7 @@ export default function List(props: {
         }}
       >
         {data?.map((item) => {
-          const url = cleanUrl(item?.url?.url);
+          const url = cleanUrl(item?.url);
           return (
             <li
               key={item.uid}
@@ -81,7 +83,7 @@ export default function List(props: {
               }}
             >
               <Link href={`/${url}`}>
-                <a className="article-btn"> {item?.url?.url}</a>
+                <a className="article-btn"> {item?.url}</a>
               </Link>
             </li>
           );

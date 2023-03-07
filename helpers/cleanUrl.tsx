@@ -7,5 +7,5 @@ export const cleanUrl = (url: string) => {
 };
 
 export const pathToUrl = (path: string[]) => {
-  return "/" + path.join("/") + "/";
+  return "/" + path.join("/");
 };

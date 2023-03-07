@@ -14,7 +14,7 @@ export const getUrls = async (contentType: string, skip = 0) => {
     sort_direction: "desc",
     "only[BASE][]": "url",
   }).toString();
-  const data = await fetch(
+  const data: ArticleListResponse = await fetch(
     `${process.env.CONTENT_STACK_BASE_URL}v3/content_types/${contentType}/entries?${params}`,
     {
       method: "GET",
