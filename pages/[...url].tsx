@@ -89,6 +89,7 @@ export const getStaticProps: GetStaticProps<{
   try {
     relatedListResponseSchema.parse(related);
   } catch (error) {
+    throw new Error(error);
     // NOTIFICATION
     console.log(error);
   }
@@ -149,7 +150,18 @@ export default function ArticleId(
                 marginBottom: "0.5rem",
               }}
             >
-              {item.title}
+              <div>{item.title}</div>
+              {item.tags.map((tag) => (
+                <a
+                  key={tag}
+                  style={{
+                    margin: "0.1rem",
+                    borderBottom: "1px solid yellow",
+                  }}
+                >
+                  {tag}
+                </a>
+              ))}
             </div>
           ))}
         </div>
