@@ -3,8 +3,14 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { cleanPath, pathToUrl } from "../helpers/cleanUrl";
-import { CONTENT_TYPE, REVALIDATE } from "../helpers/constants";
+import {
+  CONTENT_TYPE,
+  RELATED_CONTENT_TYPE,
+  REVALIDATE,
+} from "../helpers/constants";
+import { relatedListResponseSchema } from "../helpers/validatorPartialDex";
 import { getEntry } from "../helpers/getEntry";
+import { getRelated } from "../helpers/getRelated";
 import { getUrls } from "../helpers/getUrls";
 
 /**
@@ -71,13 +77,21 @@ export async function getStaticPaths() {
 
 export const getStaticProps: GetStaticProps<{
   data: ArticleContentStack.Article;
+  related: RelatedListResponse;
 }> = async (context) => {
   const { params } = context;
   const data: ArticleContentStack.Article = await getEntry(
     CONTENT_TYPE,
     pathToUrl(params?.url as string[])
   );
+  const related: RelatedListResponse = await getRelated(RELATED_CONTENT_TYPE);
 
+  try {
+    relatedListResponseSchema.parse(related);
+  } catch (error) {
+    // NOTIFICATION
+    console.log(error);
+  }
   if (!data) {
     return {
       notFound: true,
@@ -85,7 +99,7 @@ export const getStaticProps: GetStaticProps<{
     };
   }
   return {
-    props: { data },
+    props: { data, related },
     revalidate: REVALIDATE, // In seconds
   };
 };
@@ -98,6 +112,7 @@ export default function ArticleId(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   const router = useRouter();
+  console.log(props);
   return (
     <div>
       <Head>
@@ -113,10 +128,32 @@ export default function ArticleId(
       </button>
 
       <div
-        dangerouslySetInnerHTML={{
-          __html: props.data?.content,
+        style={{
+          display: "grid",
+          gridTemplateColumns: "3fr 1fr",
         }}
-      />
+      >
+        <div
+          dangerouslySetInnerHTML={{
+            __html: props.data?.content,
+          }}
+        />
+
+        <div>
+          {props.related.entries.map((item) => (
+            <div
+              key={item.url}
+              style={{
+                padding: "0.5rem",
+                border: "1px solid #ccc",
+                marginBottom: "0.5rem",
+              }}
+            >
+              {item.title}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

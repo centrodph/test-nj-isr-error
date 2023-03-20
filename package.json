@@ -6,12 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "validator:dex": "npx ts-to-zod ./types.d.ts ./helpers/validatorDex.ts",
+    "validator:article": "npx ts-to-zod ./article.d.ts ./helpers/validatorArticle.ts",
+    "validator:related": "npx ts-to-zod ./related.d.ts ./helpers/validatorPartialDex.ts"
   },
   "dependencies": {
     "next": "12.3.4",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/node": "18.14.2",
