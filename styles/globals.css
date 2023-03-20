@@ -39,6 +39,19 @@ img {
   cursor: pointer;
 }
 
+.revalidate-btn-error {
+  background: rgba(255, 127, 127, 0.873);
+  color: black;
+  cursor: pointer;
+}
+
+.revalidate-btn-success {
+  background: rgba(127, 255, 136, 0.873);
+  color: black;
+  cursor: pointer;
+}
+
+
 .article-btn {
   padding: 0.3rem 1rem;
   color: crimson;

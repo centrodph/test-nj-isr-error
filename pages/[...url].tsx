@@ -1,6 +1,5 @@
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { cleanPath, pathToUrl } from "../helpers/cleanUrl";
 import {
@@ -12,6 +11,9 @@ import { relatedListResponseSchema } from "../helpers/validatorPartialDex";
 import { getEntry } from "../helpers/getEntry";
 import { getRelated } from "../helpers/getRelated";
 import { getUrls } from "../helpers/getUrls";
+import { sendNotification } from "../helpers/slack";
+import { z } from "zod";
+import { zodToHumanReadable } from "../helpers/errorParse";
 
 /**
  =========fallback: false
@@ -78,6 +80,7 @@ export async function getStaticPaths() {
 export const getStaticProps: GetStaticProps<{
   data: ArticleContentStack.Article;
   related: RelatedListResponse;
+  timestamp: string;
 }> = async (context) => {
   const { params } = context;
   const data: ArticleContentStack.Article = await getEntry(
@@ -88,11 +91,14 @@ export const getStaticProps: GetStaticProps<{
 
   try {
     relatedListResponseSchema.parse(related);
-  } catch (error) {
-    throw new Error(error);
-    // NOTIFICATION
-    console.log(error);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const errorNotification = zodToHumanReadable(err.issues);
+      sendNotification(errorNotification);
+    }
+    throw err;
   }
+
   if (!data) {
     return {
       notFound: true,
@@ -100,7 +106,7 @@ export const getStaticProps: GetStaticProps<{
     };
   }
   return {
-    props: { data, related },
+    props: { data, related, timestamp: new Date().toISOString() },
     revalidate: REVALIDATE, // In seconds
   };
 };
@@ -113,7 +119,19 @@ export default function ArticleId(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   const router = useRouter();
-  console.log(props);
+
+  // const revalidate = async (isValid: boolean) => {
+  //   await fetch("/api/publish", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       url: router.asPath,
+  //     }),
+  //   });
+  // };
+
   return (
     <div>
       <Head>
@@ -123,11 +141,32 @@ export default function ArticleId(
       </Head>
 
       <h1>{props.data?.title}</h1>
+      <div>
+        <span>{props.timestamp}</span>
+      </div>
 
       <button className="back-btn" onClick={() => router.back()}>
         Back
       </button>
 
+      {/* <div style={{ display: "flex" }}>
+        <div>
+          <button
+            className="revalidate-btn-error"
+            onClick={() => revalidate(true)}
+          >
+            Revalidate with error
+          </button>
+        </div>
+        <div>
+          <button
+            className="revalidate-btn-success"
+            onClick={() => revalidate(true)}
+          >
+            Revalidate with success
+          </button>
+        </div>
+      </div> */}
       <div
         style={{
           display: "grid",
