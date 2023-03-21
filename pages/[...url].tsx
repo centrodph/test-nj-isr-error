@@ -94,9 +94,18 @@ export const getStaticProps: GetStaticProps<{
   } catch (err) {
     if (err instanceof z.ZodError) {
       const errorNotification = zodToHumanReadable(err.issues);
-      sendNotification(errorNotification);
+      sendNotification(`CONTENT INFO\n\n${related.entries
+        .map(
+          (item) =>
+            `UID:    ${item.uid}\nLOCALE: ${item.locale}\nTITLE:  ${item.title} \n`
+        )
+        .join("\n\n")}**********ERROR**********\n\n
+      ${errorNotification}
+      `);
     }
-    throw err;
+    //TAKE PREVIOUS VERSION INSTEAD
+    console.log("TODO");
+    // throw err;
   }
 
   if (!data) {
